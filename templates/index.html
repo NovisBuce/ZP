@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2E8B57;
+            color: white;
+            text-align: center;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 20px;
+            margin: 20px;
+            cursor: pointer;
+        }
+        .game-info {
+            font-size: 24px;
+        }
+        img {
+            width: 100px;
+            height: 150px;
+            margin: 10px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Vítejte v Blackjacku!</h1>
+    <div class="game-info">
+        <p>Peníze: <span id="player_money">{{ player_money }}</span> Kč</p>
+        <p>Sázka: <span id="player_bet">{{ player_bet }}</span> Kč</p>
+    </div>
+
+    <button class="button" id="start_game_btn">Začít Hru</button>
+    <button class="button" id="hit_btn" style="display:none;">Hit</button>
+    <button class="button" id="stand_btn" style="display:none;">Stand</button>
+    <button class="button" id="reset_btn" style="display:none;">Resetovat Hru</button>
+
+    <div id="game_area">
+        <h2>Hráčovy karty</h2>
+        <div id="player_cards"></div>
+        <h2>Dealerovy karty</h2>
+        <div id="dealer_cards"></div>
+        <div id="game_result"></div>
+    </div>
+
+    <script>
+        const cardPath = '/static/cardsBJ/';
+
+        $('#start_game_btn').click(function () {
+            let bet = prompt('Zadejte sázku:');
+            $.post('/start_game', { bet: bet }, function (data) {
+                $('#player_money').text(data.player_money);
+                $('#player_bet').text(data.player_bet);
+                $('#player_cards').html(data.player_cards.map(card => `<img src="${cardPath}${card}" alt="card">`).join(''));
+                $('#dealer_cards').html(data.dealer_cards.map(card => `<img src="${cardPath}${card}" alt="card">`).join(''));
+                $('#start_game_btn').hide();
+                $('#hit_btn').show();
+                $('#stand_btn').show();
+                $('#reset_btn').show();
+            });
+        });
+
+        $('#hit_btn').click(function () {
+            $.post('/hit', function (data) {
+                $('#player_cards').html(data.player_cards.map(card => `<img src="${cardPath}${card}" alt="card">`).join(''));
+                if (data.game_over) {
+                    $('#game_result').text('Prohráli jste!');
+                    $('#hit_btn').hide();
+                    $('#stand_btn').hide();
+                }
+            });
+        });
+
+        $('#stand_btn').click(function () {
+            $.post('/stand', function (data) {
+                $('#player_cards').html(data.player_cards.map(card => `<img src="${cardPath}${card}" alt="card">`).join(''));
+                $('#dealer_cards').html(data.dealer_cards.map(card => `<img src="${cardPath}${card}" alt="card">`).join(''));
+                $('#game_result').text(data.game_result);
+                $('#player_money').text(data.player_money);
+                $('#hit_btn').hide();
+                $('#stand_btn').hide();
+            });
+        });
+
+        $('#reset_btn').click(function () {
+            $.post('/reset_game', function (data) {
+                $('#player_money').text(data.player_money);
+                $('#player_bet').text(data.player_bet);
+                $('#player_cards').html('');
+                $('#dealer_cards').html('');
+                $('#game_result').html('');
+                $('#start_game_btn').show();
+                $('#hit_btn').hide();
+                $('#stand_btn').hide();
+                $('#reset_btn').hide();
+            });
+        });
+    </script>
+</body>
+</html>

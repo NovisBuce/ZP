@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UNO Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .card-img { width: 100px; height: auto; margin: 5px; cursor: pointer; }
+        .top-card-img { width: 120px; height: auto; margin-bottom: 20px; display: block; }
+        .hand { display: flex; flex-wrap: wrap; }
+        .draw-form, .card-form { display: inline-block; margin: 0; padding: 0; }
+    </style>
+</head>
+<body>
+    <h1>UNO Game</h1>
+
+    {% if game_over %}
+        <h2>Game Over! Winner: {{ winner }}</h2>
+        <a href="{{ url_for('reset') }}">Start New Game</a>
+    {% else %}
+
+        <!-- Vrchní karta -->
+        <div>
+            <strong>Top Card:</strong>
+            <img class="top-card-img" src="{{ url_for('static', filename='cards/' + top_card.image_filename) }}" alt="{{ top_card }}">
+        </div>
+
+        <div>Bot has {{ bot_card_count }} cards.</div>
+
+        <!-- Lízací balíček -->
+        <form action="{{ url_for('draw') }}" method="post" class="draw-form">
+            <button type="submit" style="border: none; background: none; padding: 0;">
+                <img class="card-img" src="{{ url_for('static', filename='cards/uno_back.png') }}" alt="Draw Card">
+            </button>
+        </form>
+
+        <h3>Your Hand:</h3>
+        <div class="hand">
+        {% for card in player_hand %}
+            <form action="{{ url_for('play', card_index=loop.index0) }}" method="post" class="card-form">
+                {% if card.value is string and card.value.startswith('Wild') %}
+                    <select name="color">
+                        <option value="Red">Red</option>
+                        <option value="Yellow">Yellow</option>
+                        <option value="Green">Green</option>
+                        <option value="Blue">Blue</option>
+                    </select><br>
+                {% endif %}
+                <button type="submit" style="border: none; background: none; padding: 0;">
+                    <img class="card-img" src="{{ url_for('static', filename='cards/' + card.image_filename) }}" alt="{{ card }}">
+                </button>
+            </form>
+        {% endfor %}
+        </div>
+
+        {% if message %}
+            <div class="message"><strong>{{ message }}</strong></div>
+        {% endif %}
+
+    {% endif %}
+</body>
+</html>
