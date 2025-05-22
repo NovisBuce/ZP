@@ -1,6 +1,6 @@
 import random
 
-# --- Karty ---
+
 class Card:
     def __init__(self, color, value):
         self.color = color
@@ -58,7 +58,7 @@ class WildCard(Card):
         return game.skip_next_turn
 
 
-# --- Balíček ---
+
 class Deck:
     def __init__(self):
         self.cards = []
@@ -85,7 +85,6 @@ class Deck:
         return self.cards.pop() if self.cards else None
 
 
-# --- Hráč ---
 class Player:
     def __init__(self, name, is_computer=False):
         self.name = name
@@ -108,7 +107,7 @@ class Player:
         return any(card.is_playable(current_card) for card in self.hand)
 
 
-# --- Hra ---
+
 class Game:
     def __init__(self):
         self.deck = Deck()

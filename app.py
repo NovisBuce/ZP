@@ -21,7 +21,7 @@ def index():
 
 @app.route("/play/<int:card_index>", methods=["POST"])
 def play(card_index):
-    # Zabrání hráči hrát mimo svůj tahbnbnbn
+    
     if game.current_player_idx != 0:
         game.message = "It's not your turn!"
         return redirect(url_for("index"))
@@ -29,7 +29,7 @@ def play(card_index):
     color = request.form.get("color")
     game.play_player_card(card_index, chosen_color=color)
 
-    # Po hráčově tahu přechází hra automaticky na bota (pokud nebyl přeskočen)
+    
     if game.current_player_idx == 1 and not game.is_game_over():
         game.play_computer_turn()
 
@@ -37,7 +37,7 @@ def play(card_index):
 
 @app.route("/draw", methods=["POST"])
 def draw():
-    # Zabrání hráči táhnout mimo svůj tah
+    
     if game.current_player_idx != 0:
         game.message = "It's not your turn!"
         return redirect(url_for("index"))
@@ -47,7 +47,7 @@ def draw():
     game.message = "You drew a card."
     game.next_player()
 
-    # Po tahu hráče (tahání) hraje bot
+   
     if not game.is_game_over():
         game.play_computer_turn()
 
