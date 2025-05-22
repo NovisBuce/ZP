@@ -4,7 +4,7 @@ import random
 
 app = Flask(__name__)
 
-CARDS_PATH = "static/cardsBJ"  # cesta pro načítání obrázků
+CARDS_PATH = "static/cardsBJ"  
 
 class Hrac:
     def __init__(self):
